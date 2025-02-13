@@ -1,14 +1,12 @@
 ---
 title: "Move2Cloud: Migrating VMware Workloads to OVHcloud HPC with Veeam Replication"
 excerpt: "Learn how to migrate your on-prem VMware workloads to an OVHcloud Hosted Private Cloud environment using Veeam Replication."
-updated: 2025-02-10
+updated: 2025-02-13
 ---
-
-# Move2Cloud: Migrating VMware Workloads to OVHcloud Hosted Private Cloud with Veeam Replication
 
 ## Objective
 
-This guide explains how to migrate your on-premises VMware workloads to an OVHcloud Hosted Private Cloud (HPC) using Veeam Replication.
+This guide explains how to migrate your on-premises VMware workloads to an **OVHcloud Hosted Private Cloud (HPC)** using Veeam Replication.
 
 ## Requirements
 
@@ -18,6 +16,8 @@ Before getting started, you’ll need:
 - Correctly sized target resources (e.g., hosts, datastores, vSAN clusters).
 - A valid **Veeam Backup & Replication** solution from the [Veeam website](https://www.veeam.com/downloads.html?ad=top-sub-menu).
 - Access to vCenter and pre-configured DNS, NTP, and authentication services in HPC.
+
+![Move2Cloud](images/Move2PCC_Veam.png){.thumbnail}
 
 ## Instructions
 
@@ -37,6 +37,7 @@ Start by listing all the VMs you plan to migrate.
 #### Step 1.2: Group VMs into migration batches  
 
 Organize your VMs into logical groups based on their application dependencies. 
+
 For instance:  
 - A **web server**, an **application server**, and a **database server** that work together should be grouped in the same batch.  
 
@@ -45,6 +46,7 @@ Migrating these batches ensures that applications remain functional during the t
 #### Step 1.3: Document network and subnet details  
 
 Record the current network configuration of your on-premises environment, including:  
+
 - **Subnets** and **VLAN IDs**.  
 - The number of VLANs needed for the target Hosted Private Cloud.  
 
@@ -116,13 +118,13 @@ Refer to the [NSX first steps guide](https://help.ovhcloud.com/csm/en-gb-vmware-
 
 Your Hosted Private Cloud requires basic infrastructure services for your migrated workloads:  
 
-- **NTP:** Configure `ntp.ovh.net` for time synchronization.  
+- **NTP:** Configure `ntp.ovh.net`{.action} for time synchronization.  
 - **DNS:** Deploy DNS services, such as an Active Directory Domain Controller, to resolve domain names.  
 - **Authentication:** Set up authentication services locally in HPC to minimize cross-environment traffic.  
 
 ### Step 7: Install Veeam B&R server  
 
-Install the Veeam Backup & Replication (B&R) server in your OVHcloud HPC environment. This server will handle the replication process. 
+Install the **Veeam Backup & Replication (B&R)** server in your OVHcloud HPC environment. This server will handle the replication process. 
 
 Activate its license using the [setup guide](https://help.ovhcloud.com/csm/en-gb-public-cloud-storage-veeam-backup-replication?id=kb_article_view&sysparm_article=KB0046503).  
 
@@ -152,10 +154,10 @@ Follow the [proxy setup guide](https://helpcenter.veeam.com/docs/backup/vsphere/
 
 ### Step 10: Create replication jobs  
 
-In Veeam Backup & Replication, create a replication job to migrate your VMs.  
+In **Veeam Backup & Replication**, create a replication job to migrate your VMs.  
 
 1. Open the `Replication Jobs`{.action} section in the Veeam Console.  
-2. Add the source VMs and configure the target HPC environment.  
+2. Add the `source VMs`{.action} and configure the target HPC environment.  
 3. Set additional options like compression or application-aware processing.  
 
 Detailed steps are available in the [replication job setup guide](https://helpcenter.veeam.com/docs/backup/vsphere/replica_job.html?ver=120).  
@@ -210,7 +212,7 @@ For more information, refer to the [Storage vMotion guide](https://help.ovhcloud
 
 Now that your VMs are running in the OVHcloud Hosted Private Cloud, it’s essential to establish a backup strategy to protect your data. 
 
-Veeam Backup & Replication provides flexible options for securing your workloads.  
+**Veeam Backup & Replication** provides flexible options for securing your workloads.  
 
 1. **Define Backup Storage:**  
    - Use OVHcloud **S3-compatible storage** as a backup repository for scalability and cost efficiency.  
