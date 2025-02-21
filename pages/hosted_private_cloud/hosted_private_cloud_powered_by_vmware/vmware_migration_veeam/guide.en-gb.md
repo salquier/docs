@@ -8,6 +8,10 @@ updated: 2025-02-18
 
 This guide explains how to migrate your on-premises VMware workloads to an **OVHcloud Hosted Private Cloud (HPC)** using Veeam Replication.
 
+> [!primary]
+> **This guide applies to Hosted Private Cloud environments that are NOT part of SecNumCloud (SNC), PCI-DSS, or HDS-qualified environments.**
+> If you are using an SNC, PCI-DSS, or HDS-qualified Hosted Private Cloud, some features described here, such as OVHcloud IAM, may not be available.
+
 ## Requirements
 
 Before getting started, you will need:
@@ -21,11 +25,11 @@ Before getting started, you will need:
 
 ## Instructions
 
-### Step 1: Design your migration plan  
+### Step 1: Design your migration plan
 
-At the end of Step 1, you should have a clear understanding of which workloads you are migrating, their dependencies, and the target network and storage configuration in OVHcloud.  
+At the end of Step 1, you should have a clear understanding of which workloads you are migrating, their dependencies, and the target network and storage configuration in OVHcloud.
 
-#### Step 1.1: Create an inventory of VMs  
+#### Step 1.1: Create an inventory of VMs
 
 Start by listing all the VMs you plan to migrate.
 
@@ -35,11 +39,11 @@ For each VM, include the following information:
 - **Operating System version** (ensure it’s up-to-date and supported).
 - **Dependencies** (e.g. applications relying on specific servers).
 
-#### Step 1.2: Group VMs into migration batches  
+#### Step 1.2: Group VMs into migration batches
 
-Organize your VMs into logical groups based on their application dependencies. 
+Organize your VMs into logical groups based on their application dependencies.
 
-For instance:  
+For instance:
 
 - A **web server**, an **application server**, and a **database server** that work together should be grouped in the same batch.
 
@@ -52,9 +56,9 @@ Record the current network configuration of your on-premises environment, includ
 - **Subnets** and **VLAN IDs**.
 - The number of VLANs needed for the target Hosted Private Cloud.
 
-With [OVHcloud vRack](/links/network/vrack), you can create up to 4,000 VLANs, which allows you to replicate your current IP address plan without disruptions.
+With [OVHcloud vRack](/links/network/vrack), you can create up to 4,000 VLANs, which allows you to replicate your current IP address plan without any re-IP.
 
-### Step 2: Plan target resources  
+### Step 2: Plan target resources 
 
 At the end of this step, you will have a clear understanding of the resources required in your **Hosted Private Cloud (HPC)** environment to match your workloads.
 
@@ -64,7 +68,7 @@ Evaluate your needs for CPU and memory by calculating the total number of cores 
 
 Use your current consolidation ratio (e.g. pCPU/vCPU) as a reference to determine the number and type of ESXi hosts needed.
 
-#### Step 2.2: Define storage needs  
+#### Step 2.2: Define storage needs
 
 Decide which workloads require **NFS datastores** or **vSAN storage** based on their IOPS requirements. For applications with high performance demands, vSAN is typically the better option.
 
@@ -92,6 +96,10 @@ You can find detailed instructions in our [IP whitelisting guide](/pages/hosted_
 
 Set up roles and permissions in your `Hosted Private Cloud`{.action} using `OVHcloud IAM`.
 
+>[!warning]
+> **OVHcloud IAM is not available in SecNumCloud (SNC), PCI-DSS, or HDS environments.**
+> If you are using one of these qualified environments, you must configure roles and permissions directly in vSphere or use an external IAM solution such as Microsoft Active Directory or Okta.
+
 For instructions, refer to the [IAM setup guide](/pages/hosted_private_cloud/hosted_private_cloud_powered_by_vmware/vmware_iam_getting_started).
 
 #### Step 4.2: Integrate with existing IAM solutions
@@ -114,7 +122,7 @@ Plan your network traffic by creating a flow matrix. Identify which VLANs are ro
 
 Use NSX-T to configure Tier-1 and Tier-0 gateways, distribute traffic, and segregate workloads. VMware tenants come with preconfigured **distributed vSwitches (dVS)** and VLANs, which you can adjust to match your environment.
 
-Refer to the [NSX first steps guide](/pages/hosted_private_cloud/hosted_private_cloud_powered_by_vmware/nsx-01-first-steps) for more details.  
+Refer to the [NSX first steps guide](/pages/hosted_private_cloud/hosted_private_cloud_powered_by_vmware/nsx-01-first-steps) for more details.
 
 ### Step 6: Deploy core services
 
@@ -128,7 +136,7 @@ Your Hosted Private Cloud requires basic infrastructure services for your migrat
 
 Install the **Veeam Backup & Replication (B&R)** server in your OVHcloud HPC environment. This server will handle the replication process.
 
-Activate its license using the [setup guide](/pages/storage_and_backup/backup_and_disaster_recovery_solutions/veeam/veeam_veeam_backup_replication).  
+Activate its license using the [setup guide](/pages/storage_and_backup/backup_and_disaster_recovery_solutions/veeam/veeam_veeam_backup_replication).
 
 ### Step 8: Set up secure connectivity
 
@@ -163,7 +171,7 @@ In **Veeam Backup & Replication**, create a replication job to migrate your VMs.
 2. Add the `source VMs`{.action} and configure the target HPC environment.
 3. Set additional options like compression or application-aware processing.
 
-Detailed steps are available in the [replication job setup guide](https://helpcenter.veeam.com/docs/backup/vsphere/replica_job.html?ver=120).  
+Detailed steps are available in the [replication job setup guide](https://helpcenter.veeam.com/docs/backup/vsphere/replica_job.html?ver=120).
 
 ### Step 11: Start and test replication
 
@@ -175,7 +183,7 @@ Refer to the [Failover process](https://helpcenter.veeam.com/docs/backup/vsphere
 
 Perform a `Planned Failover`{.action} on migration day to synchronize final changes, power off the source VMs, and activate the replicas in HPC.
 
-See the [Planned Failover guide](https://helpcenter.veeam.com/docs/backup/vsphere/planned_failover.html?ver=120).  
+See the [Planned Failover guide](https://helpcenter.veeam.com/docs/backup/vsphere/planned_failover.html?ver=120).
 
 ### Step 13: Validate applications
 
@@ -183,7 +191,7 @@ Ensure all VMs boot successfully and test critical services like AD, DNS, and da
 
 ### Step 14: Confirm permanent failover
 
-Use the `Permanent Failover`{.action} option in Veeam to finalize your migration. This will make the replicas in HPC the primary production VMs. 
+Use the `Permanent Failover`{.action} option in Veeam to finalize your migration. This will make the replicas in HPC the primary production VMs.
 
 Refer to the [Permanent Failover guide](https://helpcenter.veeam.com/docs/backup/vsphere/permanent_failover.html?ver=120).
 
@@ -197,14 +205,14 @@ Once your VMs have been migrated to the OVHcloud HPC, you may need to optimize t
 
 This involves moving VMs and their virtual disk files (VMDKs) to the appropriate storage.
 
-1. **Assess Performance Requirements:**  
+1. **Assess Performance Requirements:**
     - Identify which VMs require high-performance storage (e.g. vSAN for intensive workloads).
     - Use NFS datastores for less demanding applications.
 
-2. **Use Storage vMotion:**  
+2. **Use Storage vMotion:**
     - Open the `vSphere Client`{.action} and navigate to the VM you wish to move.
     - Right-click the VM and select `Migrate`{.action}.
-    - Choose the `Change storage only`{.action}  option and select the target datastore (vSAN or NFS).
+    - Choose the `Change storage only`{.action} option and select the target datastore (vSAN or NFS).
     - Review and confirm the migration settings, then start the migration process.
 
 This step ensures your VMs are stored on the appropriate infrastructure to meet their performance needs.
@@ -218,7 +226,7 @@ Now that your VMs are running in the OVHcloud Hosted Private Cloud, it’s essen
 **Veeam Backup & Replication** provides flexible options for securing your workloads.
 
 1. **Define Backup Storage:**
-   - Use OVHcloud **[S3*-compatible Object Storage](/links/public-cloud/object-storage)** as a backup repository for scalability and cost efficiency.
+    - Use OVHcloud **[S3*-compatible Object Storage](/links/public-cloud/object-storage)** as a backup repository for scalability and cost efficiency.
 
 2. **Create a Backup Job in Veeam:**
     - Open the **Veeam Console** and navigate to the `Home`{.action} tab.
@@ -234,3 +242,16 @@ Now that your VMs are running in the OVHcloud Hosted Private Cloud, it’s essen
 Setting up regular backups guarantees that your workloads are protected against data loss or corruption. For detailed instructions, refer to the [Veeam S3 backup guide](/pages/storage_and_backup/object_storage/s3_veeam).
 
 *: S3 is a trademark of Amazon Technologies, Inc. OVHcloud’s service is not sponsored by, endorsed by, or otherwise affiliated with Amazon Technologies, Inc.
+
+## Go Further
+
+You can explore these additional resources to enhance your backup, replication, and disaster recovery strategy with OVHcloud:
+
+- [Veeam Managed Backup](https://www.ovhcloud.com/en/hosted-private-cloud/vmware/veeam-managed-backup/)– A fully managed backup solution by OVHcloud.
+- [Zerto for VMware on OVHcloud](https://www.ovhcloud.com/en/hosted-private-cloud/vmware/zerto/)– Disaster recovery and replication across regions.
+
+If you need training or technical assistance to implement our solutions, please contact your Technical Account Manager or click on [this link](/links/professional-services) to get a quote and ask our Professional Services experts for a custom analysis of your project.
+
+Ask questions, give your feedback and interact directly with the team building our Hosted Private Cloud services on the dedicated [Discord](https://discord.gg/ovhcloud) channel.
+
+Join our [community of users](/links/community).
